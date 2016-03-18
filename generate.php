@@ -124,9 +124,12 @@ function genClass($object, $champs)
 	$len = count($champs);
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
-			if ($i == $len - 1) {
+			echo '_'.$champ.'_';
+			if ($i == $len-1) {
+			echo '['.$champ.',]';
 				fwrite($fp,"                    ".$object."_".$champ." = :".$object."_".$champ. PHP_EOL);
 			} else {
+			echo '['.$champ.']';
 				fwrite($fp,"                    ".$object."_".$champ." = :".$object."_".$champ.",". PHP_EOL);
 			}
 			// …
@@ -338,6 +341,7 @@ function genJavascript($object, $champs)
 	fwrite($fp,"  	\$('#Ajouter".$objectMaj."').click( function(e) {". PHP_EOL);
 	fwrite($fp,"		e.preventDefault();". PHP_EOL);
 	fwrite($fp,"		\$('#".$object."TitreOperation').text(\"Nouvel objet ".$objectMaj."\");". PHP_EOL);
+	fwrite($fp,"		\$('#id".$objectMaj."').val(\"\");". PHP_EOL);
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
 			fwrite($fp,"		\$('#".$champ.$objectMaj."').val(\"\");". PHP_EOL);

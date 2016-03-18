@@ -75,6 +75,7 @@ div {
                 create_directory('gen/'.$object.'/scripts');
 
             }
+            print_r($champs);
             // 2. Génère la classe
             genClass($object, $champs);
             genPageAccueil($object, $champs);
