@@ -124,12 +124,9 @@ function genClass($object, $champs)
 	$len = count($champs);
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
-			echo '_'.$champ.'_';
 			if ($i == $len-1) {
-			echo '['.$champ.',]';
 				fwrite($fp,"                    ".$object."_".$champ." = :".$object."_".$champ. PHP_EOL);
 			} else {
-			echo '['.$champ.']';
 				fwrite($fp,"                    ".$object."_".$champ." = :".$object."_".$champ.",". PHP_EOL);
 			}
 			// …
@@ -274,7 +271,7 @@ function genJavascript($object, $champs)
 	fwrite($fp,"						}	". PHP_EOL);
 	fwrite($fp,"						else {". PHP_EOL);
 	fwrite($fp,"						toastr.error(p, \"".$objectMaj."\");". PHP_EOL);
-	fwrite($fp,"						}			". PHP_EOL);
+	fwrite($fp,"						}". PHP_EOL);
 	fwrite($fp,"				},". PHP_EOL);
 	fwrite($fp,"				error : function( msg, status,xhr ) {". PHP_EOL);
 	fwrite($fp,"					toastr.error(msg + \"(\"+status+\")\", \"".$objectMaj."\");". PHP_EOL);
@@ -303,7 +300,7 @@ function genJavascript($object, $champs)
 		}
 	}
 	fwrite($fp,"						\$('#my".$objectMaj."Popup').modal();". PHP_EOL);
-	fwrite($fp,"					}				". PHP_EOL);
+	fwrite($fp,"					}". PHP_EOL);
 	fwrite($fp,"			},". PHP_EOL);
 	fwrite($fp,"			error : function( msg, status,xhr ) {". PHP_EOL);
 	fwrite($fp,"				toastr.error(msg + \"(\"+status+\")\", \"".$objectMaj."\");". PHP_EOL);
@@ -327,7 +324,11 @@ function genJavascript($object, $champs)
 	fwrite($fp,"						\$('#id".$objectMaj."Delete').val( msg.id);". PHP_EOL);
 	fwrite($fp,"						\$('#id".$objectMaj."DeleteTitre').html(\"Objet id : \" + msg.id);". PHP_EOL);
 	fwrite($fp,"						\$('#my".$objectMaj."DeletePopup').modal();". PHP_EOL);
-	fwrite($fp,"					}				". PHP_EOL);
+	fwrite($fp,"					}". PHP_EOL);
+	fwrite($fp,"				    else {". PHP_EOL);
+	fwrite($fp,"				        var c = msg.commentaire;". PHP_EOL);
+	fwrite($fp,"						toastr.error(c, \"".$objectMaj."\");". PHP_EOL);
+	fwrite($fp,"					}". PHP_EOL);
 	fwrite($fp,"			},". PHP_EOL);
 	fwrite($fp,"			error : function( msg, status,xhr ) {". PHP_EOL);
 	fwrite($fp,"				toastr.error(msg + \"(\"+status+\")\", \"".$objectMaj."\");". PHP_EOL);
@@ -742,7 +743,7 @@ function genPageAccueil($object, $champs)
 	fwrite($fp,"          </div>". PHP_EOL);
 	fwrite($fp,"          <div class=\"modal-footer\">". PHP_EOL);
 	fwrite($fp,"           	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Annuler</button>". PHP_EOL);
-	fwrite($fp,"            <button type=\"button\" class=\"btn btn-primary\" id=\"effacer".$objectMaj."\">Sauver</button>". PHP_EOL);
+	fwrite($fp,"            <button type=\"button\" class=\"btn btn-primary\" id=\"effacer".$objectMaj."\">Supprimer</button>". PHP_EOL);
 	fwrite($fp,"            </div>". PHP_EOL);
 	fwrite($fp,"       </div>". PHP_EOL);
 	fwrite($fp,"     </div>". PHP_EOL);

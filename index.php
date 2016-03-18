@@ -75,7 +75,6 @@ div {
                 create_directory('gen/'.$object.'/scripts');
 
             }
-            print_r($champs);
             // 2. Génère la classe
             genClass($object, $champs);
             genPageAccueil($object, $champs);
@@ -102,7 +101,7 @@ div {
                 <input autocomplete="off" class="input" id="input<?php echo $pass; ?>" name="pass" type="text" placeholder="Password" data-items="8" value="<?php echo $pass; ?>" />
             </div>
             <br>
-            <label class="control-label" for="object">Nom de l'objet</label>
+            <label class="control-label" for="object">Nom de l'objet (sans le <i>'s'</i> à la fin)</label>
             <div id="objet">
                 <input autocomplete="off" class="input" id="objet" name="object" type="text" placeholder="Nom de l'objet" data-items="8" value="<?php echo $object; ?>" />
             </div>
