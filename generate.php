@@ -442,12 +442,12 @@ function genCreateTable($object, $champs)
 	fwrite($fp,"<?php". PHP_EOL);
 	fwrite($fp,"// Creation de la table ".$objectMaj. PHP_EOL);
 	fwrite($fp,"function createTable(\$bd) { ". PHP_EOL);
-	fwrite($fp,"  \$query = \"SHOW TABLES LIKE '".$objectMaj."'\";". PHP_EOL);
+	fwrite($fp,"  \$query = \"SHOW TABLES LIKE '".$object."'\";". PHP_EOL);
 	fwrite($fp,"  \$stmt = \$bd->prepare(\$query);". PHP_EOL);
 	fwrite($fp,"  if (\$stmt->execute()) {". PHP_EOL);
 	fwrite($fp,"     \$row = \$stmt->fetch(PDO::FETCH_ASSOC);". PHP_EOL);
 	fwrite($fp,"     if(empty(\$row)) {". PHP_EOL);
-	fwrite($fp,"        \$query = \"create table ".$objectMaj." (". PHP_EOL);
+	fwrite($fp,"        \$query = \"create table ".$object." (". PHP_EOL);
 	fwrite($fp,"                  ".$object."_id int(11) AUTO_INCREMENT,". PHP_EOL);
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
@@ -704,29 +704,31 @@ function genPageAccueil($object, $champs)
 	fwrite($fp,"   <div class=\"modal fade\" id=\"my".$objectMaj."Popup\" tabindex=\"-1\">". PHP_EOL);
 	fwrite($fp,"      <div class=\"modal-dialog\" role=\"document\">". PHP_EOL);
 	fwrite($fp,"        <div class=\"modal-content\">". PHP_EOL);
-	fwrite($fp,"          <div class=\"modal-header\">". PHP_EOL);
-	fwrite($fp,"            <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>". PHP_EOL);
-	fwrite($fp,"            <h4 class=\"modal-title\" id=\"".$object."TitreOperation\">Modification ".$objectMaj."</h4>". PHP_EOL);
-	fwrite($fp,"          </div>". PHP_EOL);
-	fwrite($fp,"            <form>". PHP_EOL);
-	fwrite($fp,"            <div class=\"modal-body\">". PHP_EOL);
+	fwrite($fp,"          <form>". PHP_EOL);
+	fwrite($fp,"            <div class=\"modal-header\">". PHP_EOL);
+	fwrite($fp,"               <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>". PHP_EOL);
+	fwrite($fp,"               <h4 class=\"modal-title\" id=\"".$object."TitreOperation\">Modification ".$objectMaj."</h4>". PHP_EOL);
+	fwrite($fp,"             </div>". PHP_EOL);
+	fwrite($fp,"             <div class=\"modal-body form-horizontal\">". PHP_EOL);
 	fwrite($fp,"                <input type=\"hidden\" class=\"form-control\" id=\"id".$objectMaj."\">". PHP_EOL);
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
 			fwrite($fp,"                <div class=\"form-group\">". PHP_EOL);
-			fwrite($fp,"                    <label for=\"message-text\" class=\"control-label\">".$champ."</label>". PHP_EOL);
-			fwrite($fp,"                    <input type=\"text\" class=\"form-control\" id=\"".$champ.$objectMaj."\">". PHP_EOL);
+			fwrite($fp,"                    <label for=\"message-text\" class=\"control-label col-sm-2\">".$champ."</label>". PHP_EOL);
+			fwrite($fp,"                    <div class=\"col-sm-10\">". PHP_EOL);
+			fwrite($fp,"                       <input type=\"text\" class=\"form-control\" id=\"".$champ.$objectMaj."\">". PHP_EOL);
+			fwrite($fp,"                    </div>". PHP_EOL);
 			fwrite($fp,"                </div>". PHP_EOL);
 		}
 	}
 
-	fwrite($fp,"            </div>". PHP_EOL);
-	fwrite($fp,"            <div class=\"modal-footer\">". PHP_EOL);
-	fwrite($fp,"             	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Annuler</button>". PHP_EOL);
+	fwrite($fp,"             </div>". PHP_EOL);
+	fwrite($fp,"             <div class=\"modal-footer\">". PHP_EOL);
+	fwrite($fp,"                <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Annuler</button>". PHP_EOL);
 	fwrite($fp,"                <button type=\"button\" class=\"btn btn-primary\" id=\"sauver".$objectMaj."\">Sauver</button>". PHP_EOL);
+	fwrite($fp,"             </div>". PHP_EOL);
 	fwrite($fp,"            </div>". PHP_EOL);
-	fwrite($fp,"        </form>". PHP_EOL);
-	fwrite($fp,"        </div>". PHP_EOL);
+	fwrite($fp,"          </form>". PHP_EOL);
 	fwrite($fp,"      </div>". PHP_EOL);
 	fwrite($fp,"    </div>". PHP_EOL);
 	fwrite($fp,"". PHP_EOL);
