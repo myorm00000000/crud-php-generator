@@ -1,7 +1,6 @@
-
 <?php
 
-
+/* Objet avec attributs et méthodes */
 function genClass($object, $champs)
 {
 
@@ -9,23 +8,26 @@ function genClass($object, $champs)
 	$fp = fopen("gen/". $object . "/objects/" . $object . ".php","wb");
 
 	fwrite($fp,"<?php". PHP_EOL);
+	fwrite($fp,"// Objet ".$objectMaj. PHP_EOL);
+	fwrite($fp,"// generé le ".date("d-m-Y H:i:s"). PHP_EOL);
 	fwrite($fp,"class $objectMaj {". PHP_EOL);
 	fwrite($fp," ". PHP_EOL);
-	fwrite($fp,"    // database connection and table name". PHP_EOL);
+	fwrite($fp,"    // Connexion database". PHP_EOL);
 	fwrite($fp,"    private \$conn;". PHP_EOL);
 	fwrite($fp," ". PHP_EOL);
-	fwrite($fp,"    // object properties". PHP_EOL);
+	fwrite($fp,"    // Propriétés de l'objet". PHP_EOL);
 	fwrite($fp,"    public \$".$object."_id;". PHP_EOL);
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
+			$champ = strtolower($champ);
 			fwrite($fp,"    public \$".$object."_".$champ.";" . PHP_EOL);
 		}
 	}
 	fwrite($fp," ". PHP_EOL);
+	fwrite($fp,"    // Constructeur : sauve handle de la database". PHP_EOL);
 	fwrite($fp,"    public function __construct(\$db){". PHP_EOL);
 	fwrite($fp,"        \$this->conn = \$db;". PHP_EOL);
 	fwrite($fp,"    }". PHP_EOL);
-	fwrite($fp,"". PHP_EOL);
 	fwrite($fp,"". PHP_EOL);
 	fwrite($fp,"    // Retourne l'objet courant". PHP_EOL);
 	fwrite($fp,"    function charge".$objectMaj."()". PHP_EOL);
@@ -41,6 +43,7 @@ function genClass($object, $champs)
 	fwrite($fp,"        \$this->".$object."_id=\$".$object."_id;". PHP_EOL);
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
+			$champ = strtolower($champ);
 			fwrite($fp,"        \$this->".$object."_".$champ."=\$".$object."_".$champ.";". PHP_EOL);
 		}
 	}
@@ -48,7 +51,6 @@ function genClass($object, $champs)
 	fwrite($fp,"      }". PHP_EOL);
 	fwrite($fp,"      return false;". PHP_EOL);
 	fwrite($fp,"    }". PHP_EOL);
-	fwrite($fp,"". PHP_EOL);
 	fwrite($fp,"". PHP_EOL);
 	fwrite($fp,"    // Retourne l'objet $object courant". PHP_EOL);
 	fwrite($fp,"    function charge".$objectMaj."Courant()". PHP_EOL);
@@ -62,12 +64,12 @@ function genClass($object, $champs)
 	fwrite($fp,"      \$this->".$object."_id=\$".$object."_id;". PHP_EOL);
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
+			$champ = strtolower($champ);
 			fwrite($fp,"      \$this->".$object."_".$champ."=\$".$object."_".$champ.";". PHP_EOL);
 		}
 	}
 	fwrite($fp,"      return \$this;". PHP_EOL);
 	fwrite($fp,"    }". PHP_EOL);
-	fwrite($fp,"". PHP_EOL);
 	fwrite($fp,"". PHP_EOL);
 	fwrite($fp,"    // Retourne tous les objets". PHP_EOL);
 	fwrite($fp,"    function lit".$objectMaj."s()". PHP_EOL);
@@ -79,13 +81,13 @@ function genClass($object, $champs)
 	fwrite($fp,"      return \$stmt;". PHP_EOL);
 	fwrite($fp,"    }". PHP_EOL);
 	fwrite($fp,"". PHP_EOL);
-	fwrite($fp,"". PHP_EOL);
-	fwrite($fp,"   // Ajoute un objet". PHP_EOL);
+	fwrite($fp,"    // Ajoute un objet". PHP_EOL);
 	fwrite($fp,"    function ajoute".$objectMaj."(){". PHP_EOL);
 	fwrite($fp,"         try {". PHP_EOL);
 	$liste="";
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
+			$champ = strtolower($champ);
 			$liste = $liste.",".$object."_".$champ;
 		}
 	}
@@ -94,6 +96,7 @@ function genClass($object, $champs)
 	$liste="";
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
+			$champ = strtolower($champ);
 			$liste = $liste.", :".$object."_".$champ;
 		}
 	}
@@ -102,6 +105,7 @@ function genClass($object, $champs)
 	fwrite($fp,"         \$stmt = \$this->conn->prepare(\$query);". PHP_EOL);
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
+			$champ = strtolower($champ);
 			fwrite($fp,"        \$stmt->bindParam(':".$object."_".$champ."', \$this->".$object."_".$champ.");". PHP_EOL);
 		}
 	}
@@ -124,6 +128,7 @@ function genClass($object, $champs)
 	$len = count($champs);
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
+			$champ = strtolower($champ);
 			if ($i == $len-1) {
 				fwrite($fp,"                    ".$object."_".$champ." = :".$object."_".$champ. PHP_EOL);
 			} else {
@@ -139,6 +144,7 @@ function genClass($object, $champs)
 	fwrite($fp,"        \$stmt->bindParam(':id', \$this->".$object."_id);". PHP_EOL);
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
+			$champ = strtolower($champ);
 			fwrite($fp,"        \$stmt->bindParam(':".$object."_".$champ."', \$this->".$object."_".$champ.");". PHP_EOL);
 		}
 	}
@@ -174,6 +180,7 @@ function genClass($object, $champs)
 }
 
 
+/* Javascript de cet objet : Appel services CRUD, Ouverture fenêtre, datePicker, etc. */
 function genJavascript($object, $champs)
 {
 	$objectMaj = ucfirst ( $object );
@@ -221,6 +228,7 @@ function genJavascript($object, $champs)
 	fwrite($fp,"			var id".$objectMaj." = \$('#id".$objectMaj."').val(); ". PHP_EOL);
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
+			$champ = strtolower($champ);
 			fwrite($fp,"			var ".$champ." = \$('#".$champ.$objectMaj."').val(); ". PHP_EOL);
 		}
 	}
@@ -231,6 +239,7 @@ function genJavascript($object, $champs)
 	$listeChamps="";
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
+			$champ = strtolower($champ);
 			$listeChamps = $listeChamps . ", " . $champ . " : " .$champ;
 		}
 	}
@@ -296,6 +305,7 @@ function genJavascript($object, $champs)
 	fwrite($fp,"						\$('#id".$objectMaj."').val(msg.id);". PHP_EOL);
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
+			$champ = strtolower($champ);
 			fwrite($fp,"						\$('#".$champ.$objectMaj."').val(msg.".$champ.");". PHP_EOL);
 		}
 	}
@@ -345,6 +355,7 @@ function genJavascript($object, $champs)
 	fwrite($fp,"		\$('#id".$objectMaj."').val(\"\");". PHP_EOL);
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
+			$champ = strtolower($champ);
 			fwrite($fp,"		\$('#".$champ.$objectMaj."').val(\"\");". PHP_EOL);
 		}
 	}
@@ -352,6 +363,32 @@ function genJavascript($object, $champs)
 	fwrite($fp,"	});". PHP_EOL);
 	fwrite($fp,"". PHP_EOL);
 	fwrite($fp,"". PHP_EOL);
+	fwrite($fp,"    /** DatePicker */". PHP_EOL);
+	foreach ($champs as $champ) {
+		if (!empty($champ)) {
+			$champ = strtolower($champ);
+			// Si type date ou heure, ajout du datepicker
+			if (substr( $champ, 0, 11 ) === "date_heure_" ||
+				substr( $champ, 0, 6 ) === "heure_" ||
+				substr( $champ, 0, 5 ) === "date_") {            	
+				fwrite($fp,"	\$(function() {". PHP_EOL);
+				fwrite($fp,"		$('#dt_".$champ.$objectMaj."').datetimepicker({". PHP_EOL);
+                fwrite($fp,"		     locale: 'fr',");
+				if (substr( $champ, 0, 11 ) === "date_heure_") {
+	                fwrite($fp,"		     format: 'DD/MM/YYYY HH:mm'");
+				}
+				else if (substr( $champ, 0, 6 ) === "heure_") {
+	                fwrite($fp,"		     format: 'HH:mm'");
+				} else if (substr( $champ, 0, 5 ) === "date_") {
+	                fwrite($fp,"		     format: 'DD/MM/YYYY'");
+				}
+                fwrite($fp,"		});");
+				fwrite($fp,"	});". PHP_EOL);
+			}
+		}
+	}
+
+
 	fwrite($fp,"	/**". PHP_EOL);
 	fwrite($fp,"	 * Initialisation de l'application dès que le DOM est chargé". PHP_EOL);
 	fwrite($fp,"	 */". PHP_EOL);
@@ -363,6 +400,22 @@ function genJavascript($object, $champs)
 	fclose($fp);
 }
 
+
+/* CSS de cet objet : Appel services CRUD, Ouverture fenêtre, datePicker, etc. */
+function genCss($object, $champs)
+{
+	$objectMaj = ucfirst ( $object );
+	$fp = fopen("gen/". $object . "/dist/css/" . $object . ".css","wb");
+	fwrite($fp,"". PHP_EOL);
+	fwrite($fp,".input-group[class*=\"col-\"] {". PHP_EOL);
+	fwrite($fp,"    padding-left: 15px;". PHP_EOL);
+	fwrite($fp,"    padding-right: 15px;". PHP_EOL);
+	fwrite($fp,"}". PHP_EOL);
+	fclose($fp);
+}
+
+
+/* Objet DataBase : Connexion à la base de données mysql */
 function genDatabase($object, $host, $user, $pass, $bd)
 {
 	$fp = fopen("gen/". $object . "/config/database.php","wb");
@@ -412,6 +465,8 @@ function genDatabase($object, $host, $user, $pass, $bd)
 	fclose($fp);
 }
 
+
+/* Page entête commune à toutes les pages */
 function genPageHead($object, $champs)
 {
 	$objectMaj = ucfirst ( $object );
@@ -430,11 +485,15 @@ function genPageHead($object, $champs)
 	fwrite($fp,"    <meta name=\"author\" content=\"Lionel C.\">". PHP_EOL);
 	fwrite($fp,"    <title>".$object."</title>". PHP_EOL);
     fwrite($fp,"    <link rel=\"stylesheet\" href=\"dist/css/bootstrap.min.css\">". PHP_EOL);
+    fwrite($fp,"    <link rel=\"stylesheet\" href=\"dist/css/bootstrap-datetimepicker.min.css\">". PHP_EOL);
     fwrite($fp,"    <link rel=\"stylesheet\" href=\"dist/css/toastr.min.css\">". PHP_EOL);
+    fwrite($fp,"    <link rel=\"stylesheet\" href=\"dist/css/".$objectMaj.".css\">". PHP_EOL);
 	fwrite($fp,"</head>". PHP_EOL);
 	fclose($fp);
 }
 
+
+/* Scriupt SQL de création de l'objet en base */
 function genCreateTable($object, $champs)
 {
 	$objectMaj = ucfirst ( $object );
@@ -451,7 +510,28 @@ function genCreateTable($object, $champs)
 	fwrite($fp,"                  ".$object."_id int(11) AUTO_INCREMENT,". PHP_EOL);
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
-			fwrite($fp,"                  ".$object."_".$champ." varchar(255) NOT NULL,". PHP_EOL);
+			$champ = strtolower($champ);
+			if (substr( $champ, 0, 11 ) === "date_heure_") {
+				fwrite($fp,"                  ".$object."_".$champ." datetime NOT NULL,". PHP_EOL);
+			}
+			elseif (substr( $champ, 0, 6 ) === "heure_") {
+				fwrite($fp,"                  ".$object."_".$champ." time NOT NULL,". PHP_EOL);
+			}
+			elseif (substr( $champ, 0, 5 ) === "date_") {
+				fwrite($fp,"                  ".$object."_".$champ." date NOT NULL,". PHP_EOL);
+			}
+			elseif (substr( $champ, 0, 7 ) === "entier_") {
+				fwrite($fp,"                  ".$object."_".$champ." int(8)  NOT NULL,". PHP_EOL);
+			}
+			elseif (substr( $champ, 0, 10 ) === "numerique_") {
+				fwrite($fp,"                  ".$object."_".$champ." float(10,2) NOT NULL,". PHP_EOL);
+			}
+			elseif (substr( $champ, 0, 6 ) === "texte_") {
+				fwrite($fp,"                  ".$object."_".$champ." text NOT NULL,". PHP_EOL);
+			}
+			else {
+				fwrite($fp,"                  ".$object."_".$champ." varchar(255) NOT NULL,". PHP_EOL);
+			}
 		}
 	}
 	fwrite($fp,"                  PRIMARY KEY  (".$object."_id)". PHP_EOL);
@@ -507,6 +587,7 @@ function genScriptJson($object, $champs)
 	fwrite($fp,"        \$json[\"id\"]=\$".$object."->".$object."_id;". PHP_EOL);
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
+			$champ = strtolower($champ);
 			fwrite($fp,"        \$json[\"".$champ."\"]=\$".$object."->".$object."_".$champ.";". PHP_EOL);
 		}
 	}
@@ -522,6 +603,7 @@ function genScriptJson($object, $champs)
 	fwrite($fp,"      \$".$object."->".$object."_id = \$_POST['id'];". PHP_EOL);
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
+			$champ = strtolower($champ);
 			fwrite($fp,"      \$".$object."->".$object."_".$champ." = \$_POST['".$champ."'];". PHP_EOL);
 		}
 	}
@@ -547,6 +629,7 @@ function genScriptJson($object, $champs)
 	fwrite($fp,"      \$".$object."->".$object."_id = \$".$object."->".$object."_id;". PHP_EOL);
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
+			$champ = strtolower($champ);
 			fwrite($fp,"      \$".$object."->".$object."_".$champ." = \$_POST['".$champ."'];". PHP_EOL);
 		}
 	}
@@ -584,10 +667,10 @@ function genPageNav($object, $champs)
 	fwrite($fp,"<!-- Navigation -->". PHP_EOL);
 	fwrite($fp,"<nav class=\"navbar navbar-default navbar-static-top\" role=\"navigation\" style=\"margin-bottom: 0\">". PHP_EOL);
 	fwrite($fp,"    <div class=\"navbar-header\">". PHP_EOL);
-	fwrite($fp,"        <a href=\"index.php\">                ". PHP_EOL);
+	fwrite($fp,"        <a href=\"admin_" . $object . ".php\">                ". PHP_EOL);
 	fwrite($fp,"            <img src=\"dist/css/logo.png\" alt=\"logo\" class=\"hidden-xs\"/>". PHP_EOL);
 	fwrite($fp,"        </a>". PHP_EOL);
-	fwrite($fp,"        <a class=\"navbar-default\" href=\"index.php\" style=\"font-size:2em;padding:10px\">".$objectMaj."</a>". PHP_EOL);
+	fwrite($fp,"        <a class=\"navbar-default\" href=\"admin_" . $object . ".php\" style=\"font-size:2em;padding:10px\">".$objectMaj."</a>". PHP_EOL);
 	fwrite($fp,"    </div>". PHP_EOL);
 	fwrite($fp,"    <!-- /.navbar-header -->". PHP_EOL);
 	fwrite($fp,"</nav>". PHP_EOL);
@@ -652,6 +735,7 @@ function genPageAccueil($object, $champs)
 	fwrite($fp,"                                            <th>Id</th>". PHP_EOL);
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
+			$champ = strtolower($champ);
 			fwrite($fp,"                                            <th>".$champ."</th>". PHP_EOL);
 		}
 	}
@@ -668,6 +752,7 @@ function genPageAccueil($object, $champs)
 	fwrite($fp,"                                                    echo \"<td>{\$".$object."_id}</td>\";". PHP_EOL);
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
+			$champ = strtolower($champ);
 			fwrite($fp,"                                                    echo \"<td>{\$".$object."_".$champ."}</td>\";". PHP_EOL);
 		}
 	}
@@ -696,13 +781,18 @@ function genPageAccueil($object, $champs)
 	fwrite($fp,"    <!-- /#wrapper -->". PHP_EOL);
 	fwrite($fp,"". PHP_EOL);
     fwrite($fp,"    <script src=\"dist/js/jquery.min.js\"></script>". PHP_EOL);
+    fwrite($fp,"    <script src=\"dist/js/moment.min.js\"></script>". PHP_EOL);
+    fwrite($fp,"    <script src=\"dist/js/transition.js\"></script>". PHP_EOL);
+    fwrite($fp,"    <script src=\"dist/js/collapse.js\"></script>". PHP_EOL);
     fwrite($fp,"    <script src=\"dist/js/bootstrap.min.js\"></script>". PHP_EOL);
+    fwrite($fp,"    <script src=\"dist/js/bootstrap-datetimepicker.min.js\"></script>". PHP_EOL);
     fwrite($fp,"    <script src=\"dist/js/toastr.min.js\"></script>". PHP_EOL);
+    fwrite($fp,"    <script src=\"dist/js/fr.js\"></script>". PHP_EOL);
     fwrite($fp,"    <script src=\"dist/js/".$object.".js\"></script>". PHP_EOL);
 	fwrite($fp,"". PHP_EOL);
 	fwrite($fp,"    <!-- Modal - MAJ d'un objet -->". PHP_EOL);
 	fwrite($fp,"   <div class=\"modal fade\" id=\"my".$objectMaj."Popup\" tabindex=\"-1\">". PHP_EOL);
-	fwrite($fp,"      <div class=\"modal-dialog\" role=\"document\">". PHP_EOL);
+	fwrite($fp,"      <div class=\"modal-dialog  modal-lg\" role=\"document\">". PHP_EOL);
 	fwrite($fp,"        <div class=\"modal-content\">". PHP_EOL);
 	fwrite($fp,"          <form>". PHP_EOL);
 	fwrite($fp,"            <div class=\"modal-header\">". PHP_EOL);
@@ -713,11 +803,55 @@ function genPageAccueil($object, $champs)
 	fwrite($fp,"                <input type=\"hidden\" class=\"form-control\" id=\"id".$objectMaj."\">". PHP_EOL);
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
+			$champ = strtolower($champ);
+			// Div form-group pour chaque champ
 			fwrite($fp,"                <div class=\"form-group\">". PHP_EOL);
+			// Div col-2 avec le titre
 			fwrite($fp,"                    <label for=\"message-text\" class=\"control-label col-sm-2\">".$champ."</label>". PHP_EOL);
-			fwrite($fp,"                    <div class=\"col-sm-10\">". PHP_EOL);
-			fwrite($fp,"                       <input type=\"text\" class=\"form-control\" id=\"".$champ.$objectMaj."\">". PHP_EOL);
+			// Div col-10 avec le champ de saisie
+			if (substr( $champ, 0, 11 ) === "date_heure_" ||
+				substr( $champ, 0, 6 ) === "heure_" ||
+				substr( $champ, 0, 5 ) === "date_") {
+				fwrite($fp,"                    <div class=\"col-sm-10 input-group date\" id=\"dt_".$champ.$objectMaj."\">". PHP_EOL);
+			}
+			else  {
+				fwrite($fp,"                    <div class=\"col-sm-10\">". PHP_EOL);
+			}
+
+			// Champ de saisie.
+			if (substr( $champ, 0, 11 ) === "date_heure_") {
+				fwrite($fp,"                       <input type=\"datetime\" class=\"form-control\" id=\"".$champ.$objectMaj."\">". PHP_EOL);
+				fwrite($fp,"                       <span class=\"input-group-addon\">". PHP_EOL);
+				fwrite($fp,"                      		<span class=\"glyphicon glyphicon-calendar\"></span>". PHP_EOL);
+				fwrite($fp,"                       </span>". PHP_EOL);
+			}
+			elseif (substr( $champ, 0, 6 ) === "heure_") {
+				fwrite($fp,"                       <input type=\"time\" class=\"form-control\" id=\"".$champ.$objectMaj."\">". PHP_EOL);
+				fwrite($fp,"                       <span class=\"input-group-addon\">". PHP_EOL);
+				fwrite($fp,"                      		<span class=\"glyphicon glyphicon-calendar\"></span>". PHP_EOL);
+				fwrite($fp,"                       </span>". PHP_EOL);
+			}
+			elseif (substr( $champ, 0, 5 ) === "date_") {
+				fwrite($fp,"                       <input type=\"date\" class=\"form-control\" id=\"".$champ.$objectMaj."\">". PHP_EOL);
+				fwrite($fp,"                       <span class=\"input-group-addon\">". PHP_EOL);
+				fwrite($fp,"                      		<span class=\"glyphicon glyphicon-calendar\"></span>". PHP_EOL);
+				fwrite($fp,"                       </span>". PHP_EOL);
+			}
+			elseif (substr( $champ, 0, 7 ) === "entier_") {
+				fwrite($fp,"                       <input type=\"number\" class=\"form-control\" id=\"".$champ.$objectMaj."\">". PHP_EOL);
+			}
+			elseif (substr( $champ, 0, 10 ) === "numerique_") {
+				fwrite($fp,"                       <input type=\"number\" class=\"form-control\" id=\"".$champ.$objectMaj."\">". PHP_EOL);
+			}
+			elseif (substr( $champ, 0, 6 ) === "texte_") {
+				fwrite($fp,"                       <textarea class=\"form-control\" id=\"".$champ.$objectMaj."\"  rows=\"3\"></textarea>". PHP_EOL);
+			}
+			else {
+				fwrite($fp,"                       <input type=\"text\" class=\"form-control\" id=\"".$champ.$objectMaj."\">". PHP_EOL);
+			}		
+			// Fin div col-10	
 			fwrite($fp,"                    </div>". PHP_EOL);
+			// Fin Div form-group pour chaque champ
 			fwrite($fp,"                </div>". PHP_EOL);
 		}
 	}

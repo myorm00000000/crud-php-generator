@@ -40,12 +40,16 @@ div {
 <?php
     include dirname(__FILE__)."/generate.php";
     $object="";
+    $host = "<machine>";
+    $user = "<user>";
+    $pass = "<password>";
+    $bd = "<base>";
 
     // Formulaire
     if (isset($_POST["submit"])) {
         if (isset( $_POST['object'])) {
             // 0. Récupère le formulaire
-            $object = $_POST['object'];
+            $object = strtolower($_POST['object']);
             $champs = $_POST['champ'];
             if (isset( $_POST['host']) && !empty( $_POST['host']) ) 
                 $host = $_POST['host'];
@@ -82,6 +86,7 @@ div {
             genPageHead($object, $champs);
             genPageNav($object, $champs);
             genJavascript($object, $champs);
+            genCss($object, $champs);
             genScriptJson($object, $champs);
             genCreateTable($object, $champs);
         }
