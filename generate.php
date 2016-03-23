@@ -1,11 +1,11 @@
 <?php
 
 /* Objet avec attributs et méthodes */
-function genClass($object, $champs)
+function genClass($project, $object, $champs)
 {
 
 	$objectMaj = ucfirst ( $object );
-	$fp = fopen("gen/". $object . "/objects/" . $object . ".php","wb");
+	$fp = fopen("gen/". $project . "/objects/" . $object . ".php","wb");
 
 	fwrite($fp,"<?php". PHP_EOL);
 	fwrite($fp,"// Objet ".$objectMaj. PHP_EOL);
@@ -29,7 +29,7 @@ function genClass($object, $champs)
 	fwrite($fp,"        \$this->conn = \$db;". PHP_EOL);
 	fwrite($fp,"    }". PHP_EOL);
 	fwrite($fp,"". PHP_EOL);
-	fwrite($fp,"    // Retourne l'objet courant". PHP_EOL);
+	fwrite($fp,"    // Retourne l'objet pour un ID donne". PHP_EOL);
 	fwrite($fp,"    function charge".$objectMaj."()". PHP_EOL);
 	fwrite($fp,"    {". PHP_EOL);
 	fwrite($fp,"      // Requete pour retrouver un objet pour un ID donné". PHP_EOL);
@@ -44,7 +44,35 @@ function genClass($object, $champs)
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
 			$champ = strtolower($champ);
-			fwrite($fp,"        \$this->".$object."_".$champ."=\$".$object."_".$champ.";". PHP_EOL);
+			// Champ de saisie.
+			if (substr( $champ, 0, 11 ) === "date_heure_") {
+				fwrite($fp,"      if (\$".$object."_".$champ." === \"0000-00-00 00:00:00\") {". PHP_EOL);
+				fwrite($fp,"           \$valTemp = \"\";". PHP_EOL);
+				fwrite($fp,"      } else {". PHP_EOL);
+				fwrite($fp,"           \$valTemp = date('d/m/Y H:i', strtotime(\$".$object."_".$champ."));". PHP_EOL);
+				fwrite($fp,"      } ". PHP_EOL);
+				fwrite($fp,"      \$this->".$object."_".$champ."=\$valTemp;". PHP_EOL);
+			}
+			elseif (substr( $champ, 0, 6 ) === "heure_") {
+				fwrite($fp,"      if (\$".$object."_".$champ." === \"00:00:00\") {". PHP_EOL);
+				fwrite($fp,"           \$valTemp = \"\";". PHP_EOL);
+				fwrite($fp,"      } else {". PHP_EOL);
+				fwrite($fp,"           \$valTemp = date('H:i', strtotime(\$".$object."_".$champ."));". PHP_EOL);
+				fwrite($fp,"      } ". PHP_EOL);
+				fwrite($fp,"      \$this->".$object."_".$champ."=\$valTemp;". PHP_EOL);
+			}
+			elseif (substr( $champ, 0, 5 ) === "date_") {
+				fwrite($fp,"      if (\$".$object."_".$champ." === \"0000-00-00\") {". PHP_EOL);
+				fwrite($fp,"           \$valTemp = \"\";". PHP_EOL);
+				fwrite($fp,"      } else {". PHP_EOL);
+				fwrite($fp,"           \$valTemp = date('d/m/Y', strtotime(\$".$object."_".$champ."));". PHP_EOL);
+				fwrite($fp,"      } ". PHP_EOL);
+				fwrite($fp,"      \$this->".$object."_".$champ."=\$valTemp;". PHP_EOL);
+			}
+			else {
+				fwrite($fp,"      \$this->".$object."_".$champ."=\$".$object."_".$champ.";". PHP_EOL);
+			}
+
 		}
 	}
 	fwrite($fp,"        return true;". PHP_EOL);
@@ -65,7 +93,35 @@ function genClass($object, $champs)
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
 			$champ = strtolower($champ);
-			fwrite($fp,"      \$this->".$object."_".$champ."=\$".$object."_".$champ.";". PHP_EOL);
+			// Champ de saisie.
+			if (substr( $champ, 0, 11 ) === "date_heure_") {
+				fwrite($fp,"      if (\$".$object."_".$champ." === \"0000-00-00 00:00:00\") {". PHP_EOL);
+				fwrite($fp,"           \$valTemp = \"\";". PHP_EOL);
+				fwrite($fp,"      } else {". PHP_EOL);
+				fwrite($fp,"           \$valTemp = date('d/m/Y H:i', strtotime(\$".$object."_".$champ."));". PHP_EOL);
+				fwrite($fp,"      } ". PHP_EOL);
+				fwrite($fp,"      \$this->".$object."_".$champ."=\$valTemp;". PHP_EOL);
+			}
+			elseif (substr( $champ, 0, 6 ) === "heure_") {
+				fwrite($fp,"      if (\$".$object."_".$champ." === \"00:00:00\") {". PHP_EOL);
+				fwrite($fp,"           \$valTemp = \"\";". PHP_EOL);
+				fwrite($fp,"      } else {". PHP_EOL);
+				fwrite($fp,"           \$valTemp = date('H:i', strtotime(\$".$object."_".$champ."));". PHP_EOL);
+				fwrite($fp,"      } ". PHP_EOL);
+				fwrite($fp,"      \$this->".$object."_".$champ."=\$valTemp;". PHP_EOL);
+			}
+			elseif (substr( $champ, 0, 5 ) === "date_") {
+				fwrite($fp,"      if (\$".$object."_".$champ." === \"0000-00-00\") {". PHP_EOL);
+				fwrite($fp,"           \$valTemp = \"\";". PHP_EOL);
+				fwrite($fp,"      } else {". PHP_EOL);
+				fwrite($fp,"           \$valTemp = date('d/m/Y', strtotime(\$".$object."_".$champ."));". PHP_EOL);
+				fwrite($fp,"      } ". PHP_EOL);
+				fwrite($fp,"      \$this->".$object."_".$champ."=\$valTemp;". PHP_EOL);
+			}
+			else {
+				fwrite($fp,"      \$this->".$object."_".$champ."=\$".$object."_".$champ.";". PHP_EOL);
+			}
+
 		}
 	}
 	fwrite($fp,"      return \$this;". PHP_EOL);
@@ -181,10 +237,10 @@ function genClass($object, $champs)
 
 
 /* Javascript de cet objet : Appel services CRUD, Ouverture fenêtre, datePicker, etc. */
-function genJavascript($object, $champs)
+function genJavascript($project, $object, $champs)
 {
 	$objectMaj = ucfirst ( $object );
-	$fp = fopen("gen/". $object . "/dist/js/" . $object . ".js","wb");
+	$fp = fopen("gen/". $project . "/dist/js/" . $object . ".js","wb");
 
 	fwrite($fp,"(function(\$) {". PHP_EOL);
 	fwrite($fp,"	'use strict';". PHP_EOL);
@@ -402,10 +458,10 @@ function genJavascript($object, $champs)
 
 
 /* CSS de cet objet : Appel services CRUD, Ouverture fenêtre, datePicker, etc. */
-function genCss($object, $champs)
+function genCss($project, $object, $champs)
 {
 	$objectMaj = ucfirst ( $object );
-	$fp = fopen("gen/". $object . "/dist/css/" . $object . ".css","wb");
+	$fp = fopen("gen/". $project . "/dist/css/" . $object . ".css","wb");
 	fwrite($fp,"". PHP_EOL);
 	fwrite($fp,".input-group[class*=\"col-\"] {". PHP_EOL);
 	fwrite($fp,"    padding-left: 15px;". PHP_EOL);
@@ -416,9 +472,9 @@ function genCss($object, $champs)
 
 
 /* Objet DataBase : Connexion à la base de données mysql */
-function genDatabase($object, $host, $user, $pass, $bd)
+function genDatabase($project, $object, $host, $user, $pass, $bd)
 {
-	$fp = fopen("gen/". $object . "/config/database.php","wb");
+	$fp = fopen("gen/". $project . "/config/database.php","wb");
 	fwrite($fp,"<?php". PHP_EOL);
 	fwrite($fp,"class Database{". PHP_EOL);
 	fwrite($fp,"     // specify your own database credentials of ".$object.PHP_EOL);
@@ -467,10 +523,10 @@ function genDatabase($object, $host, $user, $pass, $bd)
 
 
 /* Page entête commune à toutes les pages */
-function genPageHead($object, $champs)
+function genPageHead($project, $object, $champs)
 {
 	$objectMaj = ucfirst ( $object );
-	$fp = fopen("gen/". $object . "/inc/head.php","wb");
+	$fp = fopen("gen/". $project . "/inc/head.php","wb");
 	fwrite($fp,"<!doctype html>". PHP_EOL);
 	fwrite($fp,"<html lang=\"fr\">". PHP_EOL);
 	fwrite($fp,"<head>". PHP_EOL);
@@ -494,10 +550,10 @@ function genPageHead($object, $champs)
 
 
 /* Scriupt SQL de création de l'objet en base */
-function genCreateTable($object, $champs)
+function genCreateTable($project, $object, $champs)
 {
 	$objectMaj = ucfirst ( $object );
-	$fp = fopen("gen/". $object . "/config/createTable".$object.".php","wb");
+	$fp = fopen("gen/". $project . "/config/createTable".$object.".php","wb");
 	fwrite($fp,"<?php". PHP_EOL);
 	fwrite($fp,"// Creation de la table ".$objectMaj. PHP_EOL);
 	fwrite($fp,"function createTable(\$bd) { ". PHP_EOL);
@@ -545,10 +601,10 @@ function genCreateTable($object, $champs)
 	fclose($fp);
 }
 
-function genScriptJson($object, $champs)
+function genScriptJson($project, $object, $champs)
 {
 	$objectMaj = ucfirst ( $object );
-	$fp = fopen("gen/". $object . "/scripts/ws".$objectMaj.".php","wb");
+	$fp = fopen("gen/". $project  . "/scripts/ws".$objectMaj.".php","wb");
 	fwrite($fp,"<?php ". PHP_EOL);
 	fwrite($fp,"". PHP_EOL);
 	fwrite($fp,"header('Content-Type: application/json');". PHP_EOL);
@@ -574,6 +630,7 @@ function genScriptJson($object, $champs)
 	fwrite($fp,"    // Nouvel objet ".$objectMaj. PHP_EOL);
 	fwrite($fp,"    \$".$object." = new ".$objectMaj."(\$db);". PHP_EOL);
 	fwrite($fp,"". PHP_EOL);
+
 	fwrite($fp,"    // Recherche (GET) -> op=R et id présent". PHP_EOL);
 	fwrite($fp,"    if ( isset(\$_GET['op']) && \$_GET['op']=='R' && isset(\$_GET['id']) && strlen(\$_GET['id'])>0   )". PHP_EOL);
 	fwrite($fp,"    {". PHP_EOL);
@@ -596,6 +653,7 @@ function genScriptJson($object, $champs)
 	fwrite($fp,"        \$json[\"resultat\"]=false;". PHP_EOL);
 	fwrite($fp,"        \$json[\"commentaire\"]=\"".$objectMaj." introuvable\";". PHP_EOL);
 	fwrite($fp,"      }". PHP_EOL);
+
 	fwrite($fp,"    }". PHP_EOL);
 	fwrite($fp,"    // Modification (POST) -> OP=M et ID non nul". PHP_EOL);
 	fwrite($fp,"    else if ( isset(\$_POST['op']) && \$_POST['op']=='M' && isset(\$_POST['id']) && strlen(\$_POST['id'])>0  )". PHP_EOL);
@@ -604,7 +662,35 @@ function genScriptJson($object, $champs)
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
 			$champ = strtolower($champ);
-			fwrite($fp,"      \$".$object."->".$object."_".$champ." = \$_POST['".$champ."'];". PHP_EOL);
+			// Champ de saisie.
+			if (substr( $champ, 0, 11 ) === "date_heure_") {
+				fwrite($fp,"      // Cas date et heure". PHP_EOL);
+				fwrite($fp,"      if (empty(\$_POST['".$champ."'])) {". PHP_EOL);
+				fwrite($fp,"          \$valTemp =null;". PHP_EOL);
+				fwrite($fp,"      } else {". PHP_EOL);
+				fwrite($fp,"          \$valTemp = date('Y-m-d H:i', strtotime(str_replace('/','-',\$_POST['".$champ."'])));". PHP_EOL);
+				fwrite($fp,"      } ". PHP_EOL);
+			}
+			elseif (substr( $champ, 0, 6 ) === "heure_") {
+				fwrite($fp,"      // Cas heure". PHP_EOL);
+				fwrite($fp,"      if (empty(\$_POST['".$champ."'])) {". PHP_EOL);
+				fwrite($fp,"          \$valTemp =null;". PHP_EOL);
+				fwrite($fp,"      } else {". PHP_EOL);
+				fwrite($fp,"          \$valTemp = date('H:i', strtotime(str_replace('/','-',\$_POST['".$champ."'])));". PHP_EOL);
+				fwrite($fp,"      } ". PHP_EOL);
+			}
+			elseif (substr( $champ, 0, 5 ) === "date_") {
+				fwrite($fp,"      // Cas date". PHP_EOL);
+				fwrite($fp,"      if (empty(\$_POST['".$champ."'])) {". PHP_EOL);
+				fwrite($fp,"          \$valTemp =null;". PHP_EOL);
+				fwrite($fp,"      } else {". PHP_EOL);
+				fwrite($fp,"          \$valTemp = date('Y-m-d', strtotime(str_replace('/','-',\$_POST['".$champ."'])));". PHP_EOL);
+				fwrite($fp,"      } ". PHP_EOL);
+			}
+			else {
+				fwrite($fp,"      \$valTemp = \$_POST['".$champ."'];". PHP_EOL);
+			}
+			fwrite($fp,"      \$".$object."->".$object."_".$champ." = \$valTemp;". PHP_EOL);
 		}
 	}
 	fwrite($fp,"      if (\$debug==true)". PHP_EOL);
@@ -613,6 +699,7 @@ function genScriptJson($object, $champs)
 	fwrite($fp,"      }". PHP_EOL);
 	fwrite($fp,"      \$json[\"resultat\"]=\$".$object."->modifie".$objectMaj."();". PHP_EOL);
 	fwrite($fp,"    }". PHP_EOL);
+
 	fwrite($fp,"    // Suppression (POST) -> OP=D et ID non nul". PHP_EOL);
 	fwrite($fp,"    else if ( isset(\$_POST['op']) && \$_POST['op']=='D' && isset(\$_POST['id']) && strlen(\$_POST['id'])>0  )". PHP_EOL);
 	fwrite($fp,"    {". PHP_EOL);
@@ -623,6 +710,7 @@ function genScriptJson($object, $champs)
 	fwrite($fp,"      }". PHP_EOL);
 	fwrite($fp,"      \$json[\"resultat\"]=\$".$object."->efface".$objectMaj."();". PHP_EOL);
 	fwrite($fp,"    }". PHP_EOL);
+
 	fwrite($fp,"    // Ajout (POST) -> OP=M et peut importe l'id". PHP_EOL);
 	fwrite($fp,"    else if ( isset(\$_POST['op']) && \$_POST['op']=='M' )". PHP_EOL);
 	fwrite($fp,"    {". PHP_EOL);
@@ -630,7 +718,35 @@ function genScriptJson($object, $champs)
 	foreach ($champs as $champ) {
 		if (!empty($champ)) {
 			$champ = strtolower($champ);
-			fwrite($fp,"      \$".$object."->".$object."_".$champ." = \$_POST['".$champ."'];". PHP_EOL);
+			// Champ de saisie.
+			if (substr( $champ, 0, 11 ) === "date_heure_") {
+				fwrite($fp,"      // Cas date et heure". PHP_EOL);
+				fwrite($fp,"      if (empty(\$_POST['".$champ."'])) {". PHP_EOL);
+				fwrite($fp,"          \$valTemp =null;". PHP_EOL);
+				fwrite($fp,"      } else {". PHP_EOL);
+				fwrite($fp,"          \$valTemp = date('Y-m-d H:i', strtotime(str_replace('/','-',\$_POST['".$champ."'])));". PHP_EOL);
+				fwrite($fp,"      } ". PHP_EOL);
+			}
+			elseif (substr( $champ, 0, 6 ) === "heure_") {
+				fwrite($fp,"      // Cas heure". PHP_EOL);
+				fwrite($fp,"      if (empty(\$_POST['".$champ."'])) {". PHP_EOL);
+				fwrite($fp,"          \$valTemp =null;". PHP_EOL);
+				fwrite($fp,"      } else {". PHP_EOL);
+				fwrite($fp,"          \$valTemp = date('H:i', strtotime(str_replace('/','-',\$_POST['".$champ."'])));". PHP_EOL);
+				fwrite($fp,"      } ". PHP_EOL);
+			}
+			elseif (substr( $champ, 0, 5 ) === "date_") {
+				fwrite($fp,"      // Cas date". PHP_EOL);
+				fwrite($fp,"      if (empty(\$_POST['".$champ."'])) {". PHP_EOL);
+				fwrite($fp,"          \$valTemp =null;". PHP_EOL);
+				fwrite($fp,"      } else {". PHP_EOL);
+				fwrite($fp,"          \$valTemp = date('Y-m-d', strtotime(str_replace('/','-',\$_POST['".$champ."'])));". PHP_EOL);
+				fwrite($fp,"      } ". PHP_EOL);
+			}
+			else {
+				fwrite($fp,"      \$valTemp = \$_POST['".$champ."'];". PHP_EOL);
+			}
+			fwrite($fp,"      \$".$object."->".$object."_".$champ." = \$valTemp;". PHP_EOL);
 		}
 	}
 	fwrite($fp,"      if (\$debug==true)". PHP_EOL);
@@ -660,17 +776,17 @@ function genScriptJson($object, $champs)
 
 
 
-function genPageNav($object, $champs)
+function genPageNav($project, $object, $champs)
 {
 	$objectMaj = ucfirst ( $object );
-	$fp = fopen("gen/". $object . "/inc/nav.php","wb");
+	$fp = fopen("gen/". $project . "/inc/nav.php","wb");
 	fwrite($fp,"<!-- Navigation -->". PHP_EOL);
 	fwrite($fp,"<nav class=\"navbar navbar-default navbar-static-top\" role=\"navigation\" style=\"margin-bottom: 0\">". PHP_EOL);
 	fwrite($fp,"    <div class=\"navbar-header\">". PHP_EOL);
-	fwrite($fp,"        <a href=\"admin_" . $object . ".php\">                ". PHP_EOL);
+	fwrite($fp,"        <a href=\index.php\">                ". PHP_EOL);
 	fwrite($fp,"            <img src=\"dist/css/logo.png\" alt=\"logo\" class=\"hidden-xs\"/>". PHP_EOL);
 	fwrite($fp,"        </a>". PHP_EOL);
-	fwrite($fp,"        <a class=\"navbar-default\" href=\"admin_" . $object . ".php\" style=\"font-size:2em;padding:10px\">".$objectMaj."</a>". PHP_EOL);
+	fwrite($fp,"        <a class=\"navbar-default\" href=\"index.php\" style=\"font-size:2em;padding:10px\">".$objectMaj."</a>". PHP_EOL);
 	fwrite($fp,"    </div>". PHP_EOL);
 	fwrite($fp,"    <!-- /.navbar-header -->". PHP_EOL);
 	fwrite($fp,"</nav>". PHP_EOL);
@@ -678,10 +794,10 @@ function genPageNav($object, $champs)
 }
 
 
-function genPageAccueil($object, $champs)
+function genPageAccueil($project, $object, $champs)
 {
 	$objectMaj = ucfirst ( $object );
-	$fp = fopen("gen/". $object . "/admin_" . $object . ".php","wb");
+	$fp = fopen("gen/". $project . "/" . $objectMaj . ".php","wb");
 
 	fwrite($fp,"<?php include(\"inc/head.php\"); ?>". PHP_EOL);
 	fwrite($fp,"<body>". PHP_EOL);
@@ -702,16 +818,16 @@ function genPageAccueil($object, $champs)
 	fwrite($fp,"". PHP_EOL);
 	fwrite($fp,"        // Recherche de tous les objets ".$objectMaj. PHP_EOL);
 	fwrite($fp,"        \$".$object." = new ".$objectMaj."(\$db);". PHP_EOL);
-	fwrite($fp,"        \$stmt = \$".$object."->Lit".$objectMaj."s();". PHP_EOL);
+	fwrite($fp,"        \$stmt = \$".$object."->lit".$objectMaj."s();". PHP_EOL);
 	fwrite($fp,"        \$num = \$stmt->rowCount();". PHP_EOL);
 	fwrite($fp,"". PHP_EOL);
 	fwrite($fp,"        include_once 'inc/nav.php';". PHP_EOL);
 	fwrite($fp,"        ?>". PHP_EOL);
 	fwrite($fp,"". PHP_EOL);
-	fwrite($fp,"        <div id=\"page-wrapper\">". PHP_EOL);
+	fwrite($fp,"        <div class=\"container\">". PHP_EOL);
 	fwrite($fp,"            <div class=\"row\">". PHP_EOL);
 	fwrite($fp,"                <div class=\"col-lg-12\">". PHP_EOL);
-	fwrite($fp,"                    <h1 class=\"page-header\">Administration des ".$object."s</h1>". PHP_EOL);
+	fwrite($fp,"                    <h1 class=\"page-header\">Gestion des ".$object."s</h1>". PHP_EOL);
 	fwrite($fp,"                </div>". PHP_EOL);
 	fwrite($fp,"                <!-- /.col-lg-12 -->". PHP_EOL);
 	fwrite($fp,"            </div>". PHP_EOL);

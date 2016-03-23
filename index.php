@@ -40,6 +40,7 @@ div {
 <?php
     include dirname(__FILE__)."/generate.php";
     $object="";
+    $project="";
     $host = "<machine>";
     $user = "<user>";
     $pass = "<password>";
@@ -47,8 +48,9 @@ div {
 
     // Formulaire
     if (isset($_POST["submit"])) {
-        if (isset( $_POST['object'])) {
+        if (isset( $_POST['project']) && isset( $_POST['object'])) {
             // 0. Récupère le formulaire
+            $project = strtolower($_POST['project']);
             $object = strtolower($_POST['object']);
             $champs = $_POST['champ'];
             if (isset( $_POST['host']) && !empty( $_POST['host']) ) 
@@ -69,26 +71,26 @@ div {
                 $bd = "<base>";
            
             // 1 Génére la structure
-            if (isset($object) && !empty($object) ) {
-                create_directory('gen/'.$object);
-                recurse_copy('dist','gen/'.$object.'/dist');
-                create_directory('gen/'.$object.'/objects');
-                create_directory('gen/'.$object.'/inc');
-                create_directory('gen/'.$object.'/config');
-                create_directory('gen/'.$object.'/dist/js');
-                create_directory('gen/'.$object.'/scripts');
+            if (isset($project) && !empty($project) ) {
+                create_directory('gen/'.$project);
+                recurse_copy('dist','gen/'.$project.'/dist');
+                create_directory('gen/'.$project.'/objects');
+                create_directory('gen/'.$project.'/inc');
+                create_directory('gen/'.$project.'/config');
+                create_directory('gen/'.$project.'/dist/js');
+                create_directory('gen/'.$project.'/scripts');
 
             }
             // 2. Génère la classe
-            genClass($object, $champs);
-            genPageAccueil($object, $champs);
-            genDatabase($object,$host, $user, $pass, $bd);
-            genPageHead($object, $champs);
-            genPageNav($object, $champs);
-            genJavascript($object, $champs);
-            genCss($object, $champs);
-            genScriptJson($object, $champs);
-            genCreateTable($object, $champs);
+            genClass($project, $object, $champs);
+            genPageAccueil($project, $object, $champs);
+            genDatabase($project, $object,$host, $user, $pass, $bd);
+            genPageHead($project, $object, $champs);
+            genPageNav($project, $object, $champs);
+            genJavascript($project, $object, $champs);
+            genCss($project, $object, $champs);
+            genScriptJson($project, $object, $champs);
+            genCreateTable($project, $object, $champs);
         }
     }
 ?>
@@ -106,6 +108,10 @@ div {
                 <input autocomplete="off" class="input" id="input<?php echo $pass; ?>" name="pass" type="text" placeholder="Password" data-items="8" value="<?php echo $pass; ?>" />
             </div>
             <br>
+            <label class="control-label" for="project">Nom du projet</label>
+            <div id="objet">
+                <input autocomplete="off" class="input" id="project" name="project" required type="text" placeholder="Nom du projet" data-items="8" value="<?php echo $project; ?>" />
+            </div>
             <label class="control-label" for="object">Nom de l'objet (sans le <i>'s'</i> à la fin)</label>
             <div id="objet">
                 <input autocomplete="off" class="input" id="objet" name="object" type="text" placeholder="Nom de l'objet" data-items="8" value="<?php echo $object; ?>" />
