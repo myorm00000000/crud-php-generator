@@ -28,11 +28,15 @@ body {
 input {
     margin-right:20px;
 }
-a.btn {
+a.btn.add-more-column, a.btn.remove-me {
     width: 32px;
 }
 div {
     margin-top:5px;
+}
+.object, .project, .bases {
+    background-color: #E5E5E5;
+    padding: 10px 10px 20px;
 }
 </style>
 
@@ -72,6 +76,7 @@ div {
            
             // 1 Génére la structure
             if (isset($project) && !empty($project) ) {
+                create_directory('modele');
                 create_directory('gen/'.$project);
                 recurse_copy('dist','gen/'.$project.'/dist');
                 create_directory('gen/'.$project.'/objects');
@@ -91,6 +96,9 @@ div {
             genCss($project, $object, $champs);
             genScriptJson($project, $object, $champs);
             genCreateTable($project, $object, $champs);
+
+            // 3. Sauve le modèle
+            sauveModele($project, $host, $user, $pass, $bd, $object, $champs);
         }
     }
 ?>
@@ -100,72 +108,164 @@ div {
         <h1>Générateur CRUD PHP</h1>
         <form class="input-append" method="post" action="index.php">
 
-            <label class="control-label" for="field1">Base de données</label>
-            <div>
-                <input autocomplete="off" class="input" id="input<?php echo $host; ?>" name="host" type="text" placeholder="Nom du serveur" data-items="8" value="<?php echo $host; ?>" />
-                <input autocomplete="off" class="input" id="input<?php echo $bd; ?>" name="bd" type="text" placeholder="Nom de la BD" data-items="8" value="<?php echo $bd; ?>" />
-                <input autocomplete="off" class="input" id="input<?php echo $user; ?>" name="user" type="text" placeholder="Utilisateur" data-items="8" value="<?php echo $user; ?>" />
-                <input autocomplete="off" class="input" id="input<?php echo $pass; ?>" name="pass" type="text" placeholder="Password" data-items="8" value="<?php echo $pass; ?>" />
+            <div class="project">
+                <h2>Nom du projet</h2>
+                <div id="project">
+                    <input autocomplete="off" class="input" id="project" name="project" required type="text" placeholder="Nom du projet" value="<?php echo $project; ?>" />
+                </div>
             </div>
-            <br>
-            <label class="control-label" for="project">Nom du projet</label>
-            <div id="objet">
-                <input autocomplete="off" class="input" id="project" name="project" required type="text" placeholder="Nom du projet" data-items="8" value="<?php echo $project; ?>" />
+            <hr>
+            <div class="bases">
+                <h2>Base de données</h2>
+                <div>
+                    <input autocomplete="off" class="input" id="input<?php echo $host; ?>" name="host" type="text" placeholder="Nom du serveur"  value="<?php echo $host; ?>" />
+                    <input autocomplete="off" class="input" id="input<?php echo $bd; ?>" name="bd" type="text" placeholder="Nom de la BD" value="<?php echo $bd; ?>" />
+                    <input autocomplete="off" class="input" id="input<?php echo $user; ?>" name="user" type="text" placeholder="Utilisateur" value="<?php echo $user; ?>" />
+                    <input autocomplete="off" class="input" id="input<?php echo $pass; ?>" name="pass" type="text" placeholder="Password" value="<?php echo $pass; ?>" />
+                </div>
             </div>
-            <label class="control-label" for="object">Nom de l'objet (sans le <i>'s'</i> à la fin)</label>
-            <div id="objet">
-                <input autocomplete="off" class="input" id="objet" name="object" type="text" placeholder="Nom de l'objet" data-items="8" value="<?php echo $object; ?>" />
-            </div>
-            <label class="control-label" for="field1">Liste des champs </label>
+            <hr>
+            <h2>Objets à générer</h2>
+            <div id="objects">
             <?php
             $count=1;
-            if (isset($champs)) {
-            foreach ($champs as $champ) {
-                if (!empty($champ)) {
-                    echo "<div id=\"field".$count."\">";
-                    echo "    <input autocomplete=\"off\" class=\"input\" id=\"".$count."\" name=\"champ[]\" type=\"text\" placeholder=\"Nom de la colonne\" data-items=\"8\" value=\"".$champ."\"/>";
-                    echo "    <a id=\"b".$count."\" class=\"btn btn-danger remove-me\" type=\"button\">-</a>";
+            $nbObject = 0;
+            for($i = 1; $i < 10; $i++) 
+            {
+                if (isset(${'object' . $i})) {
+                    $nbObject++;
+                    echo "<div class='object'>";
+                    echo "<label class='control-label' for='object'>Nom de l'objet (sans le <i>'s'</i> à la fin)</label>";
+                    echo "<div id='divObject".$nbObject."'>";
+                    echo "<input autocomplete='off' class='input' id='object".$nbObject."' name='object".$nbObject."' type='text' placeholder='Nom de l\'objet' value='".${'object'.$nbObject}.";' />";
                     echo "</div>";
-                    $count++;
+                    echo "<label class='control-label'>Liste des champs </label>";
+                    $count=1;
+                    if (isset($champs)) {
+                        foreach ($champs as $champ) {
+                            if (!empty($champ)) {
+                                echo "<div class='field'>";
+                                echo "    <input autocomplete='off' class='input' id='".$nbObject."-".$count."' name='champ[]' type='text' placeholder='Nom de la colonne' value='".$champ."'/>";
+                                echo "    <a id='b".$nbObject."-".$count."' class='btn btn-danger remove-me' type='button'>-</a>";
+                                echo "</div>";
+                                $count++;
+                            }
+                        }
+                    }
+                    echo "<div class='field'>";
+                    echo "    <input autocomplete='off' class='input' id='".$count."' name='champ[]' type='text' placeholder='Nom de la colonne' />";
+                    echo "    <a class='btn btn-primary add-more-column' type='button'>+</a>";
+                    echo "</div>";
+                    echo "</div>";
                 }
             }
-            }
             ?>
-            <div id="field<?php echo $count; ?>">
-                <input autocomplete="off" class="input" id="input<?php echo $count; ?>" name="champ[]" type="text" placeholder="Nom de la colonne" data-items="8"/>
-                <a id="b<?php echo $count; ?>" class="btn btn-primary add-more" type="button">+</a>
             </div>
             <div class="form-group">
-                <input id="submit" name="submit" type="submit" value="Génération" class="btn btn-primary">
+                <a class='btn btn-primary add-more-object' type='button'>Nouvel Objet</a>
+            </div>
+            <hr>
+            <div class="form-group">
+                <input id="submitGen" name="submit" type="submit" value="Génération" class="btn btn-primary">
+                <input type="hidden" id="nbObjects" value="<?php echo $nbObject; ?>"/>
             </div>
         </form>
     </div>
 </div>
 
+
 <script>
 $(document).ready(function(){
-    var next = <?php echo $count; ?>;
-    $(document).on('click', '.add-more', function(e) {
+
+    /* 
+    * Ajoute un objet
+    */
+    $(document).on('click', '.add-more-object', function(e) {
         e.preventDefault();
-        var precField = "#field" + next;
-        next = next + 1;
-        var newField = $('<div id="field'+next+'"></div>');
-        var newInput = $('<input autocomplete="off" class="input" name="champ[]"  id="input'+next+'" type="text" placeholder="Nom de la colonne" data-items="8"/>');
-        var newBtn = $('<a id="b'+next+'" class="btn btn-primary add-more" type="button">+</a>');
-        $(precField).after(newField);
-        $(newField).append(newInput);
-        $(newField).append(newBtn);
-        var removeBtn = $('<a id="remove'+ (next - 1) + '" class="btn btn-danger remove-me" >-</a>');
-         $(precField + " a").remove();
-         $(precField).append(removeBtn);
+        var next = $("#nbObjects").val();
+        next = parseFloat(next) + 1;
+        var newObject = $("<div id='div-object"+next+"' class='object'/>");
+        var newLabel = $("<div><label class='control-label' for='object'>"+next+"/ Nom de l'objet (sans le <i>'s'</i> à la fin)</label></div>");
+        //var newDiv = $("<div id='divObject"+next+"' />");
+        var newInput = $("<input autocomplete='off' class='input' id='object"+next+"' name='object"+next+"' type='text' placeholder=\"Nom de l'objet\" />");
+        var removeBtn = $('<a class="btn btn-danger remove-me" data-id="div-object'+next+'">-</a>');
+        var newLabelChamp = $("<div><label class='control-label'>Liste des champs</label></div>");
+        var newDivChamp = $("<div id='field"+next+"-1'>");
+        var newInputChamp = $("<input autocomplete='off' class='input' id='object"+next+"-1' name='champ"+next+"[]' type='text' placeholder='Nom de la colonne'/>");
+        var addNewBtn = $("<a class='btn btn-primary add-more-column' type='button' data-input='1' data-object='"+next+"' >+</a>");
+
+        // Ajout d'un objet : ajout un titre, un input pour l'objet, un bouton pour le supprimer, et un premier champ
+        $(newObject).append(newLabel);
+        $(newObject).append(newInput);
+        $(newObject).append(removeBtn);
+        $(newObject).append(newLabelChamp);
+        // Un nouveau champ avec un input et un bouton
+        $(newDivChamp).append(newInputChamp);
+        $(newDivChamp).append(addNewBtn);
+        $(newObject).append(newDivChamp);
+        // Ajout de cet objet dans la liste des objets
+        $("#objects").append(newObject);
+        // Recompte le nombre d'objets
+        recompteObjects();
     });
     
+
+    /* 
+    * Ajoute une colonne
+    */
+    $(document).on('click', '.add-more-column', function(e) {
+        e.preventDefault();
+        var idObject = $(this).attr("data-object");
+        var idInput = $(this).attr("data-input");
+        var existingObject = $("#div-object"+idObject);
+        nextInput = parseFloat(idInput) + 1;
+        var newDivChamp = $("<div id='field"+idObject+"-"+nextInput+"'>");
+        var newInputChamp = $("<input autocomplete='off' class='input' id='object"+idObject+"-"+nextInput+"' name='champ"+idObject+"[]' type='text' placeholder='Nom de la colonne'/>");
+        var addNewBtn = $("<a class='btn btn-primary add-more-column' type='button' data-input='"+nextInput+"' data-object='"+idObject+"' >+</a>");
+
+        $(existingObject).append(newDivChamp);
+        $(newDivChamp).append(newInputChamp);
+        $(newDivChamp).append(addNewBtn);
+
+        // Suppression du bouton "add" sur le champ précédent
+        var precAddBtn = $("#field"+idObject+"-"+idInput+" a");
+        $(precAddBtn).remove();
+        // Ajout du bouton "remove" sur le champ précédent
+        var precField = $("#field"+idObject+"-"+idInput);
+        var newRemoveBtn = $("<a class='btn btn-danger remove-me' type='button'  data-id='field"+idObject+"-"+idInput+"'>-</a>");
+        $(precField).append(newRemoveBtn);
+    });
+      
+
+    /* 
+    * Supprime une colonne ou un objet
+    */
     $(document).on('click', '.remove-me', function(e) {
         e.preventDefault();
-        var fieldNum = this.id.charAt(this.id.length-1);
-        var fieldID = $("#field" + fieldNum);
-        $(fieldID).remove();   
+        var idObject = "#"+$(this).attr("data-id");
+        alert(idObject);      
+        $(idObject).remove();   
+        // Recompte le nombre d'objets
+        recompteObjects();
     });    
+
+
+    /**
+     * Initialisation de l'application 
+     * 
+     */
+    function recompteObjects() {
+        var numItems = $('.object').length;
+        $("#nbObjects").val(numItems);
+    };
+
+    
+    /**
+     * Initialisation de l'application dès que le DOM est chargé
+     */
+    $(document).ready(recompteObjects);
+
+
 });
 </script>
 </body></html>

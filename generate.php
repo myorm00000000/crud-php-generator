@@ -1006,6 +1006,27 @@ function genPageAccueil($project, $object, $champs)
 }
 
 
+function sauveModele($project, $host, $user, $pass, $bd)
+{
+    $fp = fopen("modele/" . $project . ".crud_tmplt","wb");
+    fwrite($fp,"project:".$project. PHP_EOL);
+    fwrite($fp,"host:".$host. PHP_EOL);
+    fwrite($fp,"user:".$user. PHP_EOL);
+    fwrite($fp,"pass:".$pass. PHP_EOL);
+    fwrite($fp,"bd:".$bd. PHP_EOL);
+    fclose($fp);
+}
+
+function sauveObjetModele($project, $object, $champs, $ordre)
+{
+    $fp = fopen("modele/" . $project . ".crud_tmplt","wb");
+    fwrite($fp,"project:".$project. PHP_EOL);
+    fwrite($fp,"object".$ordre.":".$object. PHP_EOL);
+    fwrite($fp,"champs".$ordre.":".serialize ($champs). PHP_EOL);
+    fclose($fp);
+}
+
+
 function recurse_copy ($src,$dst) { 
     $dir = opendir($src); 
     @mkdir($dst); 
