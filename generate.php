@@ -1006,24 +1006,36 @@ function genPageAccueil($project, $object, $champs)
 }
 
 
-function sauveModele($project, $host, $user, $pass, $bd)
+
+// Sauve le modèle dans un fichier
+function sauveModele($file, $project, $host, $user, $pass, $bd)
 {
-    $fp = fopen("modele/" . $project . ".crud_tmplt","wb");
-    fwrite($fp,"project:".$project. PHP_EOL);
-    fwrite($fp,"host:".$host. PHP_EOL);
-    fwrite($fp,"user:".$user. PHP_EOL);
-    fwrite($fp,"pass:".$pass. PHP_EOL);
-    fwrite($fp,"bd:".$bd. PHP_EOL);
-    fclose($fp);
+	// Suppression du fichier si il existe
+	if (file_exists($file)) {
+		unlink ($file);
+	}
+	// Sauvegarde des données
+    file_put_contents($file,"Projet:".$project. PHP_EOL, FILE_APPEND);
+    file_put_contents($file,"host:".$host. PHP_EOL, FILE_APPEND);
+    file_put_contents($file,"user:".$user. PHP_EOL, FILE_APPEND);
+    file_put_contents($file,"password:".$pass. PHP_EOL, FILE_APPEND);
+    file_put_contents($file,"bd:".$bd. PHP_EOL, FILE_APPEND);
+
 }
 
-function sauveObjetModele($project, $object, $champs, $ordre)
+// Ajoute au modèle l'objet et ses propriétés
+function ajouteModele($file, $project, $ordre, $object, $champs)
 {
-    $fp = fopen("modele/" . $project . ".crud_tmplt","wb");
-    fwrite($fp,"project:".$project. PHP_EOL);
-    fwrite($fp,"object".$ordre.":".$object. PHP_EOL);
-    fwrite($fp,"champs".$ordre.":".serialize ($champs). PHP_EOL);
-    fclose($fp);
+	// Ajout de l'objet 
+	file_put_contents($file,"objet".$ordre.":".$object. PHP_EOL, FILE_APPEND);
+	file_put_contents($file,"nombre".$ordre.":".count($champs). PHP_EOL, FILE_APPEND);
+	// EZt des propriétés
+	foreach ($champs as $champ) 
+	{
+		if (!empty($champ)) {
+    		file_put_contents($file,"champ".$ordre.":".$champ. PHP_EOL, FILE_APPEND);
+		}
+	}
 }
 
 
@@ -1050,6 +1062,14 @@ function create_directory($rep) {
 	 }
 }
                 
+function startsWith($haystack, $needle) {
+    // search backwards starting from haystack length characters from the end
+    return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== false;
+}
 
+function endsWith($haystack, $needle) {
+    // search forward starting from end minus needle length characters
+    return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== false);
+}
 
 ?>
