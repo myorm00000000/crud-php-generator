@@ -1,72 +1,30 @@
 
 <!DOCTYPE html>
-<html lang="en">
-  <head>
+<html lang="fr">
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
-
+    <meta name="description" content="CRUD Generator">
+    <meta name="author" content="L.Capdecomme">
     <title>CRUD Generator</title>
-
     <script src="dist/js/jquery.min.js"></script>
     <link rel="stylesheet" href="dist/css/bootstrap.min.css">
     <script src="dist/js/bootstrap.min.js"></script>
-
-  </head>
-
+</head>
 
 <style>
-
-body {
-padding-top: 50px;
-}
-input {
-margin-right:20px;
-background-color: #fff;
-background-image: none;
-border: 1px solid #ccc;
-border-radius: 4px;
-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
-color: #555;
-display: inline;
-font-size: 14px;
-height: 34px;
-line-height: 1.42857;
-padding: 6px 12px;
-transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
-width: 80%;
-}
-label {
-margin-top: 8px;
-}
-input.readonly {
-width: 80%;
-}
-input.btn.load {
-width: 60px;
-display: inline;
-}
-div {
-margin-top:5px;
-}
-#objects, .project, .bases {
-background-color: #E5E5E5;
-padding: 2px 10px 25px 20px;
-margin-top: 15px;
-}
-.object {
-padding-top:20px;
-}
-.ope {
-display: inline-block;
-width: 10px;
-}
-.newObjectButton {
-padding-top:20px;
-}
+input[type="text"] {margin-right:20px;border: 1px solid #ccc;border-radius:4px;box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+color: #555;padding: 6px 12px;width: 80%;}
+input#submitGen {width: 100%;margin: 15px 0 50px;}
+label {margin-top: 8px;}
+input.readonly {width: 80%;}
+input.btn.load {width: 60px;display: inline;}
+div {margin-top:5px;}
+#objects, .project, .bases {border-radius: 4px; background-color: #E5E5E5;padding: 2px 10px 25px 20px;margin-top: 20px;}
+.object {padding-top:10px;}
+.ope {display: inline-block;width: 10px;}
+.newObjectButton {padding-top:20px;}
 </style>
 
 <body>
@@ -155,7 +113,7 @@ padding-top:20px;
                 <h2>Nom du projet</h2>
                 <div id="project">
                     <input autocomplete="off" class="input" id="nameProject" name="project" required type="text" placeholder="Nom du projet" value="<?php echo $project; ?>" />
-                    <input id="submitGen" name="chargement" type="submit" value="Lect." class="btn btn-primary load">
+                    <input id="submitLect" name="chargement" type="submit" value="Lect." class="btn btn-primary load">
                     <diV>Les modèles existants :<strong> 
 <?php
 if ($handle = opendir('modeles')) {
@@ -249,7 +207,6 @@ if ($handle = opendir('modeles')) {
                     <a class='btn btn-primary add-more-object' type='button'>Nouvel Objet</a>
                 </div>
             </div>
-            <hr>
             <div class="form-group">
                 <input id="submitGen" name="generation" type="submit" value="Génération" class="btn btn-primary">
                 <input type="hidden" id="nbObjects" value="<?php echo $nbObject; ?>"/>

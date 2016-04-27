@@ -579,7 +579,7 @@ function genCreateTable($project, $object, $champs)
 			elseif (substr( $champ, 0, 7 ) === "entier_") {
 				fwrite($fp,"                  ".$object."_".$champ." int(8)  NOT NULL,". PHP_EOL);
 			}
-			elseif (substr( $champ, 0, 10 ) === "numerique_") {
+			elseif (substr( $champ, 0, 10 ) === "numerique_" || substr( $champ, 0, 8 ) === "montant_" || substr( $champ, 0, 6 ) === "total_") {
 				fwrite($fp,"                  ".$object."_".$champ." float(10,2) NOT NULL,". PHP_EOL);
 			}
 			elseif (substr( $champ, 0, 6 ) === "texte_") {
@@ -956,7 +956,7 @@ function genPageAccueil($project, $object, $champs)
 			elseif (substr( $champ, 0, 7 ) === "entier_") {
 				fwrite($fp,"                       <input type=\"number\" class=\"form-control\" id=\"".$champ.$objectMaj."\">". PHP_EOL);
 			}
-			elseif (substr( $champ, 0, 10 ) === "numerique_") {
+			elseif (substr( $champ, 0, 10 ) === "numerique_" || substr( $champ, 0, 8 ) === "montant_" || substr( $champ, 0, 6 ) === "total_") {
 				fwrite($fp,"                       <input type=\"number\" class=\"form-control\" id=\"".$champ.$objectMaj."\">". PHP_EOL);
 			}
 			elseif (substr( $champ, 0, 6 ) === "texte_") {
